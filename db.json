@@ -2,8 +2,24 @@
   "Users": [
     {
       "id": 1,
-      "Name": "U2FsdGVkX19yVWTaRtaHi5whtTck2fkg6mEZLn2e7HA=",
-      "Role": "U2FsdGVkX18ihF6HDu6GQjWVTEwWE3DSrbdnoLAqFug="
+      "UserID": "",
+      "Name": "U2FsdGVkX19fPRPEWzjxHbjJABJ7HGG4u8hiSF3e/qo=",
+      "Role": "admin",
+      "Password": "U2FsdGVkX19km6Sb3Bd0ROlWEVm4XlVEjPC7Dq5D6Cs="
+    },
+    {
+      "id": 2,
+      "UserID": "",
+      "Name": "U2FsdGVkX1+6mth5Rwp9mbP+eC4uHJKPSgaynL5ARkc=",
+      "Role": "admin",
+      "Password": "U2FsdGVkX1/9RQVaDkk6UXXjHlpcVPUffCnDJDZJYaM="
+    },
+    {
+      "id": 3,
+      "UserID": "",
+      "Name": "U2FsdGVkX186CwVOgdOU1VXd97FGLCfV7C0+T9G/eMw=",
+      "Role": "user",
+      "Password": "U2FsdGVkX18An/Xs0jekyTI31tKeg0V3NBDgDGdtlB8="
     }
   ]
 }

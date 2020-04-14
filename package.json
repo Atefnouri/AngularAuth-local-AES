@@ -19,6 +19,7 @@
     "@angular/platform-browser": "~8.2.13",
     "@angular/platform-browser-dynamic": "~8.2.13",
     "@angular/router": "~8.2.13",
+    "@swimlane/ngx-datatable": "^16.0.3",
     "bootstrap": "^4.4.1",
     "crypto-js": "^4.0.0",
     "json-server": "^0.16.1",

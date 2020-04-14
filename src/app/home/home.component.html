@@ -1,0 +1,80 @@
+<h2>Welcome Home {{ userName }} </h2>
+<h6><span  *ngIf="isItAdmin()" class="badge badge-success">Admin</span> </h6>
+
+<button type="button" class="btn btn-danger" (click)="LogOut()" >Log out</button>
+
+<br>
+
+<div *ngIf="isItAdmin()">
+	
+ <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Role</th>
+      <th scope="col">Password</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr *ngFor="let user  of UsersArray">
+      <th scope="row">{{user.id}}</th>
+      <td scope="row">{{user.Name}}</td>
+      <td scope="row">{{user.Role}}</td>
+      <td scope="row">{{user.Password}}</td>
+      <td>
+      	<button type="button" class="btn btn-primary" aria-label="Left Align" (click)="EditUser(user.id)">
+      		Edit
+		</button>
+</td>
+    </tr>
+
+
+  </tbody>
+</table>
+
+
+
+
+<div *ngIf="EditisAllowed" >
+  <h2> Register </h2>
+  <form #f="ngForm" (ngSubmit)="submit(f)">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Login</label>
+    <input type="email" class="form-control"  [(ngModel)]="currentUser.Name"  name="loginInput" aria-describedby="emailHelp" placeholder="Login">
+    <small id="emailHelp" class="form-text text-muted">Usre Login here</small>
+  </div>
+	
+	<div class="form-group">
+  <label for="sel1">Role:</label>
+  <select  [(ngModel)]="currentUser.Role"  name="Role2" class="form-control">
+    <option value="user"  [selected]="currentUser.Role == 'user' " >User</option>
+    <option value="admin" [selected]="currentUser.Role == 'admin' " >Admin</option>
+  </select>
+</div>
+
+  <div class="form-group">
+    <label for="exampleInputPassword1">New Password</label>
+    <input type="text" class="form-control" [(ngModel)]="currentUser.Password"  name="passwordLogin" placeholder="Password">
+  </div>
+
+    <div class="form-group">
+    <label for="exampleInputPassword1">Confirm New Password</label>
+    <input type="text" class="form-control" ngModel  name="passwordLoginConfirm" placeholder="Password">
+  </div>
+  
+  <button type="submit" class="btn btn-success">Save</button>
+
+{{f.value | json }}
+
+</form>
+</div>
+
+
+
+</div>
+
+
+

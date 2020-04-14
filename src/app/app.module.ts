@@ -5,19 +5,27 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { CryptojsComponent } from './cryptojs/cryptojs.component';
+import { ConnectComponent } from './connect/connect.component';
 import { AuthService } from './auth.service';
+import { RigesterComponent } from './rigester/rigester.component';
+import { HomeComponent } from './home/home.component';
+import { ErrorpageComponent } from './errorpage/errorpage.component';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @NgModule({
    declarations: [
       AppComponent,
-      CryptojsComponent
+      ConnectComponent,
+      RigesterComponent,
+      HomeComponent,
+      ErrorpageComponent
    ],
    imports: [
       BrowserModule,
       FormsModule,
       AppRoutingModule,
-      HttpClientModule
+      HttpClientModule,
+      NgxDatatableModule
    ],
    providers: [AuthService],
    bootstrap: [

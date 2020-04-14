@@ -26,6 +26,18 @@ constructor(private  http:HttpClient) {
      return this.http.get(this.proxy.URL +'Users');
   }
 
+    updateUser(user):Observable<any> {
+     return this.http.put(this.proxy.URL +'Users/'+ user.id,user);
+  }
+
+
+
+/*
+ public updateUser(uo: any , id:number): Observable<any> {
+  return this.http.put(this.proxy.URL_LOCAL +'/api/Users/' + id , uo)
+  .pipe(map(reponse => reponse.json()));
+}
+*/
 
 
 
