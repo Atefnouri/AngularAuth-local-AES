@@ -12,56 +12,42 @@ export class RigesterComponent implements OnInit {
 
 	  public NewUser: any;
 	  public myForm:NgForm;
-  	  private LoginCrypted:String;
-  	  private PasswordCrypted: String;
-  	  //16bytes = 128bit key AES-128
+    //16bytes = 128bit key AES-128
  	  private DecryptKey: String = 'JaNdRgUjXn2r5u8x';
-
-
-  constructor(private authService: AuthService) { }
+   
+   constructor(private authService: AuthService) { }
 
   ngOnInit() {
   }
 
 
 
-
+// Encrypt and call the post fucntion
  public  submit = (ref: any) => {
  	this.myForm = ref;
-   
-   this.LoginCrypted = CryptoJS.AES.encrypt(ref.value.loginInput, this.DecryptKey).toString();
-   this.PasswordCrypted = CryptoJS.AES.encrypt(ref.value.passwordLogin, this.DecryptKey).toString();
 
-   //this.CheckPasswordMatch(ref.value.passwordLogin,ref.value.passwordLoginConfirm);
+   //check if password are identical
+   if(this.CheckPasswordMatch(ref.value.userPassword,ref.value.userPasswordConfirm))
+   {
 
-   if(this.CheckPasswordMatch(ref.value.passwordLogin,ref.value.passwordLoginConfirm)){
-   console.warn('ok');	
-  this.NewUser ={
-  id:'',
-  UserID: '',
-  Name:  this.LoginCrypted,
-  Role: '',
-  Password: this.PasswordCrypted
+  this.NewUser = {
+  Name:  CryptoJS.AES.encrypt(ref.value.userLogin, this.DecryptKey).toString(),
+  Role:  CryptoJS.AES.encrypt(ref.value.userRole, this.DecryptKey).toString(),
+  Password: CryptoJS.AES.encrypt(ref.value.userPassword, this.DecryptKey).toString()
   };
-  this.postUser();
+  this.postUser(this.NewUser);
   } else {
-
-
-  	console.error('password does not match');
-
+  	console.error('⛔','password does not match');
+  }
   }
 
 
 
+//API post new user object
 
+public postUser = (newUser:any) => {
 
-  }
-
-
-
-public postUser = () => {
-
-    this.authService.PostUser(this.NewUser).subscribe(
+    this.authService.PostUser(newUser).subscribe(
       (res) => {
         console.log('HTTP response', res);
       },
@@ -70,6 +56,7 @@ public postUser = () => {
       },
       () => {
         console.log('HTTP request completed.');
+        console.info('✅',' successuful operation');
         this.myForm.resetForm();
        
       }
@@ -78,7 +65,7 @@ public postUser = () => {
   }
 
 
-
+// check if twoo strings are matching
   public CheckPasswordMatch = (val1:String, val2:String):Boolean =>{
 
   	if(val1 === val2){

@@ -6,20 +6,33 @@
   <form #f="ngForm" (ngSubmit)="submit(f)">
   <div class="form-group">
     <label for="exampleInputEmail1">Login</label>
-    <input type="email" class="form-control"  ngModel  name="loginInput" aria-describedby="emailHelp" placeholder="Login">
+    <input type="email" class="form-control"  ngModel  name="userLogin" aria-describedby="emailHelp" placeholder="Login">
     <small id="emailHelp" class="form-text text-muted">Usre Login here</small>
   </div>
+  
+
+  <div class="form-group">
+    <label for="exampleInputPassword1">Role</label>
+    <select type="text" class="form-control" ngModel  name="userRole">
+      <option value="admin" >Admin</option>
+      <option value="user" >User</option>
+    </select>
+  </div>
+
+
+
   <div class="form-group">
     <label for="exampleInputPassword1">Password</label>
-    <input type="text" class="form-control" ngModel  name="passwordLogin" placeholder="Password">
+    <input type="text" class="form-control" ngModel  name="userPassword" placeholder="Password">
   </div>
 
     <div class="form-group">
     <label for="exampleInputPassword1">Confirm Password</label>
-    <input type="text" class="form-control" ngModel  name="passwordLoginConfirm" placeholder="Password">
+    <input type="text" class="form-control" ngModel  name="userPasswordConfirm" placeholder="Password">
   </div>
   
   <button type="submit" class="btn btn-primary">Submit</button>
+
 </form>
 
 

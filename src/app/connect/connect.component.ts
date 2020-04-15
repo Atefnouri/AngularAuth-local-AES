@@ -1,82 +1,68 @@
-import { Component, OnInit } from '@angular/core';
-import * as CryptoJS from 'crypto-js';
-import { AuthService } from '../auth.service';
-import { Router } from '@angular/router';
-
+import { Component, OnInit } from "@angular/core";
+import * as CryptoJS from "crypto-js";
+import { AuthService } from "../auth.service";
+import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-connect',
-  templateUrl: './connect.component.html',
-  styleUrls: ['./connect.component.css']
+  selector: "app-connect",
+  templateUrl: "./connect.component.html",
+  styleUrls: ["./connect.component.css"],
 })
 export class ConnectComponent implements OnInit {
-
-   //key 16octet = 128bit
-  private  DecryptKey: String ='JaNdRgUjXn2r5u8x';
+  //key 16octet = 128bit
+  private DecryptKey: String = "JaNdRgUjXn2r5u8x";
   public ActiveUser: any;
-  public userArry:any[] = [];
-  private testobjenc:string;
+  public userArry: any[] = [];
 
 
-  constructor(private authService: AuthService , private _router: Router) { 
-  }
+  constructor(private authService: AuthService, private _router: Router) {}
 
   ngOnInit() {
+    this.getUsers();
+  }
 
-
-   this.getUsers();
-
+  private aesDecryptFn(cryptedString: string): string {
+    return CryptoJS.AES.decrypt(cryptedString, this.DecryptKey).toString(
+      CryptoJS.enc.Utf8
+    );
   }
 
 
 
-
-
-
-  public  submit = (ref: any) => {
-
-   this.ActiveUser ={
-  id:'',
-  UserID: '',
-  Name: ref.value.loginInput,
-  Role: '',
-  Password:ref.value.passwordLogin
-  };
-
-  console.log(this.ActiveUser);
-
-  this.simulBackend(this.ActiveUser);
-
-  }
-
-
-
-  public simulBackend = (User:any) => {
-
-
-   let obj = this.userArry.find(o =>
-    CryptoJS.AES.decrypt(o.Name, this.DecryptKey).toString(CryptoJS.enc.Utf8) ===  User.Name &&
-    CryptoJS.AES.decrypt(o.Password, this.DecryptKey).toString(CryptoJS.enc.Utf8) ===  User.Password 
+  public submit = (ref: any) => {
+    let obj = this.userArry.find(
+      (o) =>
+        this.aesDecryptFn(o.Name) === ref.value.userLogin &&
+        this.aesDecryptFn(o.Password) === ref.value.userPassword
     );
 
-       if(obj !== undefined){
+    if (obj !== undefined) {
 
-       //prep obj
-       let newObj = obj;
-       newObj.Name = CryptoJS.AES.decrypt(newObj.Name, this.DecryptKey).toString(CryptoJS.enc.Utf8);
-       newObj.Password = CryptoJS.AES.decrypt(newObj.Password, this.DecryptKey).toString(CryptoJS.enc.Utf8);
+      let decName = this.aesDecryptFn(obj.Name);
+      let decRole = this.aesDecryptFn(obj.Role);
+      let decPassword = this.aesDecryptFn(obj.Password);
 
-       this.testobjenc = CryptoJS.AES.encrypt(JSON.stringify(newObj), this.DecryptKey).toString();
-       sessionStorage.setItem('id', this.testobjenc);
-       console.log('we found a match');
-       this._router.navigate(['/home']);
+      let decObject :{} = {
+        UserID: obj.UserID,
+        Name: decName,
+        Role: decRole,
+        Password:decPassword
+      }
 
-     } else {
-       console.log(obj);
-       console.log('no such username or password')
-     }
+       // decrypt and save object to session storage  
+      sessionStorage.setItem(
+      'id', 
+      CryptoJS.AES.encrypt(JSON.stringify(decObject), this.DecryptKey).toString()
+      );
+        // navigate to the home page
+    this._router.navigate(['/home']);
 
-  }
+      console.log("match found");
+    } else {
+      console.log("no match found");
+    }
+
+  };
 
 
 
@@ -84,27 +70,29 @@ export class ConnectComponent implements OnInit {
 
 
   //API
-    public getUsers = () => {
-
+  public getUsers = () => {
     this.authService.getUsers().subscribe(
       (res) => {
         console.table(res);
         this.userArry = res;
       },
       (err) => {
-        console.log('HTTP Error', err);
+        console.log("HTTP Error", err);
       },
       () => {
-        console.log('HTTP request completed.');
-       //this.SerchforMatch(this.userArry);
+        console.log("HTTP request completed.");
+        //this.SerchforMatch(this.userArry);
       }
+    );
+  };
+
+  public decryptTable = (myTab: any[]) => {
+    for (var i = 0; i < myTab.length; ++i) {
+      console.log(
+        this.aesDecryptFn(myTab[i].Name),
+        this.aesDecryptFn(myTab[i].Role),
+        this.aesDecryptFn(myTab[i].Password)
       );
-
-  }
-
-
-
-
-
-
+    }
+  };
 }

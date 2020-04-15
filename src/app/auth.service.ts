@@ -19,15 +19,15 @@ constructor(private  http:HttpClient) {
 
 
   PostUser(user:User):Observable<any> {
-    return this.http.post(this.proxy.URL +'Users', user);
+    return this.http.post(this.proxy.URL +'users', user);
   }
 
    getUsers():Observable<any> {
-     return this.http.get(this.proxy.URL +'Users');
+     return this.http.get(this.proxy.URL +'users');
   }
 
     updateUser(user):Observable<any> {
-     return this.http.put(this.proxy.URL +'Users/'+ user.id,user);
+     return this.http.put(this.proxy.URL +'users/'+ user.UserID,user);
   }
 
 

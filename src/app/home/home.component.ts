@@ -51,6 +51,16 @@ export class HomeComponent implements OnInit {
 
   }
 
+  private aesDecryptFn(cryptedString: string): string {
+    return CryptoJS.AES.decrypt(cryptedString, this.DecryptKey).toString(
+      CryptoJS.enc.Utf8
+    );
+  }
+
+
+  private aesEncryptFn(cryptedString: string): string {
+    return CryptoJS.AES.encrypt(cryptedString, this.DecryptKey).toString()
+  }
 
 
 
@@ -60,10 +70,10 @@ export class HomeComponent implements OnInit {
     this.authService.getUsers().subscribe(
       (res) => {
         this.UsersArray  = res.map(o => Object.assign(
-          o, {Name: o.Name =  CryptoJS.AES.decrypt(o.Name, this.DecryptKey).toString(CryptoJS.enc.Utf8)},
-             {Password: o.Password =  CryptoJS.AES.decrypt(o.Password, this.DecryptKey).toString(CryptoJS.enc.Utf8)})
-        );
-        console.table(this.UsersArray);
+          o, 
+          { Name: o.Name = this.aesDecryptFn(o.Name) },
+          { Password: o.Password = this.aesDecryptFn(o.Password) },
+          { Role: o.Role = this.aesDecryptFn(o.Role) }));
       },
       (err) => {
         console.log('HTTP Error', err);
@@ -79,85 +89,29 @@ export class HomeComponent implements OnInit {
 
   public EditUser = (id:any) =>{
 
-    console.log(id);
-    let userSelected =  this.UsersArray.find(o => o.id == id);
+    let userSelected =  this.UsersArray.find(o => o.UserID == id);
     this.currentUser =  userSelected; 
     console.log(this.currentUser);
     this.EditisAllowed = true;
-    /* let obj = this.userArry.find(o =>
-    CryptoJS.AES.decrypt(o.Name, this.DecryptKey).toString(CryptoJS.enc.Utf8) ===  User.Name &&
-    CryptoJS.AES.decrypt(o.Password, this.DecryptKey).toString(CryptoJS.enc.Utf8) ===  User.Password 
-    );*/
-
   }
 
 
 
    public  submit = (ref:any) => {
 
-     //this.EditisAllowed = fa;
+     if ( this.CheckPasswordMatch(ref.value.passwordLogin,ref.value.passwordLoginConfirm) ) {
 
-     if( this.CheckPasswordMatch(ref.value.passwordLogin,ref.value.passwordLoginConfirm) ){
-
-       console.log(this.currentUser);
-       this.currentUser
-       //let randObj:{} = this.currentUser;
-       //randObj.Name = CryptoJS.AES.encrypt(randObj.Name , this.DecryptKey).toString();
-       //randObj.Password = CryptoJS.AES.encrypt(randObj.Password , this.DecryptKey).toString();
-
-       let randObj = { 
-         id: this.currentUser.id, 
-         UserID: this.currentUser.UserID  ,
-         Name:  CryptoJS.AES.encrypt(this.currentUser.Name , this.DecryptKey).toString(), 
-         Role: this.currentUser.Role,
-         Password: CryptoJS.AES.encrypt(ref.value.passwordLogin , this.DecryptKey).toString(), 
+       let tempUserObject:{} = {
+         UserID: this.currentUser.UserID,
+         Name:this.aesEncryptFn(this.currentUser.Name),
+         Role : this.aesEncryptFn(this.currentUser.Role),
+         Password: this.aesEncryptFn(this.currentUser.Password)
        }
 
+       this.updateUser(tempUserObject);
 
-         this.authService.updateUser(randObj).subscribe(
-      (res) => {
-
-           console.log(res); 
-      },
-      (err) => {
-        console.log('HTTP Error', err);
-      },
-      () => {
-        console.log('HTTP request completed.');
-       //this.SerchforMatch(this.userArry);
-      }
-      );
-
-     
-
-
-
-     }
-
-     
-
-   /*this.myForm = ref;
-   
-   this.LoginCrypted = CryptoJS.AES.encrypt(ref.value.loginInput, this.DecryptKey).toString();
-   this.PasswordCrypted = CryptoJS.AES.encrypt(ref.value.passwordLogin, this.DecryptKey).toString();
-
-   //this.CheckPasswordMatch(ref.value.passwordLogin,ref.value.passwordLoginConfirm);
-
-   if(this.CheckPasswordMatch(ref.value.passwordLogin,ref.value.passwordLoginConfirm)){
-   console.warn('ok');  
-  this.NewUser ={
-  id:'',
-  UserID: '',
-  Name:  this.LoginCrypted,
-  Role: '',
-  Password: this.PasswordCrypted
-  };
-  this.postUser();
-  } else {
-    console.error('password does not match');*/
-
-
-  }
+     } else { console.log('password does not match') }
+}
 
 
   public CheckPasswordMatch = (val1:String, val2:String):Boolean =>{
@@ -170,6 +124,35 @@ export class HomeComponent implements OnInit {
       return false;
     }
   }
+
+
+  public updateUser = (userObj:any) =>{
+
+    this.authService.updateUser(userObj).subscribe(
+    (res) => {
+
+     console.log(res);
+},
+(err) => {
+  console.log('HTTP Error', err);
+},
+() => {
+  console.log('HTTP request completed.');
+  this.resetFn();
+ //this.SerchforMatch(this.userArry);
+}
+);
+
+}
+
+
+
+
+
+private resetFn = () =>{
+  console.log('reset');
+  this.currentUser = {};
+}
 
 
 
